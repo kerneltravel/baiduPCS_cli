@@ -1,0 +1,3 @@
+*.swp
+conf/access_token.php
+sdk/

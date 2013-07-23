@@ -12,7 +12,7 @@ function funQuota($res) {
 // TODO
 // $res, $dir
 function funListFiles($res) {
-  // maybe
+  // you are always wrong
   $app_name = 'cli';
   $path = '/apps' . '/' . $app_name . '/';
   $by = 'time';
@@ -20,7 +20,7 @@ function funListFiles($res) {
   $limit = '0-9';
 
   $res_list_files = $res->listFiles($path, $by, $order, $limit);
-  $json_list_files = json_decode($res_list_files);
+  $json_list_files = json_decode($res_list_files, TRUE);
 
   return $json_list_files;
 }
@@ -151,6 +151,20 @@ function funSearch($res, $word, $is_re) {
   $json_search = json_decode($res_search);
 
   return $json_search;
+}
+
+function funCopySingle($res, $from, $to) {
+   $app_name = 'cli';
+   $root_dir = '/apps/' . $app_name . '/';
+
+   // 绝对路径
+   $from = $root_dir . $from;
+   $to = $root_dir . $to;
+
+   $res_copy_single = $res->copySingle($from, $to);
+   $json_copy_single = json_decode($res_copy_single);
+
+   return $json_copy_single;
 }
 
 function funDiff($res) {

@@ -17,8 +17,8 @@ $pcs = new BaiduPCS($access_token);
  *
  */
 $return_funQuota = funQuota($pcs);
-$return_funQuota_quota = $return_funQuota->{'quota'} / 1024 / 1024;
-$return_funQuota_used = $return_funQuota->{'used'} / 1024 / 1024;
+$return_funQuota_quota = $return_funQuota->{'quota'} / 1024 / 1024 / 1024;
+$return_funQuota_used = $return_funQuota->{'used'} / 1024 / 1024 / 1024;
 echo 'Quota: ' . $return_funQuota_used . ' GB /' . $return_funQuota_quota . " GB \n";
 echo "\n";
 
@@ -35,9 +35,15 @@ echo "\n";
  * funListFiles()
  *
  */
-//$return_funListFiles = funListFiles($pcs);
+$return_funListFiles = funListFiles($pcs);
+$return_funListFiles_length = sizeof($return_funListFiles["list"]);
 //print_r($return_funListFiles);
-//echo 'list: ' . $return_funListFiles->{'list'}."\n";
+for ($loop = 0; $loop < $return_funListFiles_length; ++$loop) {
+  echo $return_funListFiles["list"][$loop]["path"] . "\n";
+}
+echo "\n";
+
+//echo $return_funListFiles->{'list'}."\n";
 //echo "\n";
 
 /*
@@ -52,8 +58,7 @@ echo "\n";
  * funDeleteSingle()
  *
  */
-//$return_delete_single = funDeleteSingle($pcs, 'demo');
-//print_r($return_delete_single);
+//$return_delete_single = funDeleteSingle($pcs, 'demo'); //print_r($return_delete_single);
 
 /*
  * funMakeDir()
@@ -102,10 +107,31 @@ echo "\n";
  * funSearch()
  *
  */
-$search1 = '1';
-$search2 = 'jpg';
-$return_search1 = funSearch($pcs, $search1, 1);
-$return_search2 = funSearch($pcs, $search2, 1);
-print_r($return_search1);
-print_r($return_search2);
+//$search1 = '1';
+//$search2 = 'jpg';
+//$return_search1 = funSearch($pcs, $search1, 1);
+//$return_search2 = funSearch($pcs, $search2, 1);
+//print_r($return_search1);
+//print_r($return_search2);
+
+/*
+ * funCopySingle()
+ *
+ */
+$return_funCopySingle = funCopySingle($pcs, '1.pdf', 'copy2.pdf');
+if ($return_funCopySingle) {
+  echo 'copy done' . "\n";
+}
+echo "\n";
+
+/*
+ * list again
+ *
+ */
+$return_funListFiles = funListFiles($pcs);
+$return_funListFiles_length = sizeof($return_funListFiles['list']);
+for ($loop = 0; $loop < $return_funListFiles_length; ++$loop) {
+  echo $return_funListFiles["list"][$loop]["path"] . "\n";
+}
+echo "\n";
 ?>
