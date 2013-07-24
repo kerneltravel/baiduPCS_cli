@@ -35,6 +35,7 @@ echo "\n";
  * funListFiles()
  *
  */
+/*
 $return_funListFiles = funListFiles($pcs);
 $return_funListFiles_length = sizeof($return_funListFiles["list"]);
 //print_r($return_funListFiles);
@@ -42,9 +43,7 @@ for ($loop = 0; $loop < $return_funListFiles_length; ++$loop) {
   echo $return_funListFiles["list"][$loop]["path"] . "\n";
 }
 echo "\n";
-
-//echo $return_funListFiles->{'list'}."\n";
-//echo "\n";
+ */
 
 /*
  * funUploadFile()
@@ -100,7 +99,17 @@ echo "\n";
  * funGetMeta()
  *
  */
-//$return_get_meta = funGetMeta($pcs, '1.pdf');
+$return_get_meta = funGetMeta($pcs, '1.pdf');
+$return_get_meta_list_ctime = $return_get_meta['list']['0']['ctime'];
+$return_get_meta_list_mtime = $return_get_meta['list']['0']['mtime'];
+echo date('Y-m-d h:i:s', $return_get_meta_list_ctime) . ' | ';
+echo date('Y-m-d h:i:s', $return_get_meta_list_mtime) . ' | ';
+echo $return_get_meta['list']['0']['path'];
+
+if ($return_get_meta['list']['0']['isdir']) {
+  echo '/';
+}
+echo "\n";
 //print_r($return_get_meta);
 
 /*
@@ -118,20 +127,24 @@ echo "\n";
  * funCopySingle()
  *
  */
+/*
 $return_funCopySingle = funCopySingle($pcs, '1.pdf', 'copy2.pdf');
 if ($return_funCopySingle) {
   echo 'copy done' . "\n";
 }
 echo "\n";
+ */
 
 /*
  * list again
  *
  */
+/*
 $return_funListFiles = funListFiles($pcs);
 $return_funListFiles_length = sizeof($return_funListFiles['list']);
 for ($loop = 0; $loop < $return_funListFiles_length; ++$loop) {
   echo $return_funListFiles["list"][$loop]["path"] . "\n";
 }
 echo "\n";
+ */
 ?>

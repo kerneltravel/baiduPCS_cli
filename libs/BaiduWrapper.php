@@ -138,7 +138,7 @@ function funGetMeta($res, $file) {
   $path = $root_dir . $file;
 
   $res_get_meta = $res->getMeta($path);
-  $json_get_meta = json_decode($res_get_meta);
+  $json_get_meta = json_decode($res_get_meta, TRUE);
 
   return $json_get_meta;
 }
