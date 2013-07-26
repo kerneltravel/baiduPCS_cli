@@ -9,12 +9,9 @@ function funQuota($res) {
   return $json_quota;
 }
 
-// TODO
-// $res, $dir
-function funListFiles($res) {
-  // you are always wrong
+function funListFiles($res, $path) {
   $app_name = 'cli';
-  $path = '/apps' . '/' . $app_name . '/';
+  $path = '/apps' . '/' . $app_name . '/' . $path;
   $by = 'time';
   $order = 'asc';
   $limit = '0-9';
@@ -56,7 +53,7 @@ function funDeleteSingle($res, $file) {
   $path = $root_dir . $file;
 
   $res_delete_file = $res->deleteSingle($path);
-  $json_delete_file = json_decode($res_delete_file);
+  $json_delete_file = json_decode($res_delete_file, TRUE);
 
   return $json_delete_file;
 }
@@ -79,7 +76,7 @@ function funMoveSingle($res, $from, $to) {
   $file_to = $root_dir . $to;
 
   $res_move_single = $res->moveSingle($file_from, $file_to);
-  $json_move_single = json_decode($res_move_single);
+  $json_move_single = json_decode($res_move_single, TRUE);
 
   return $json_move_single;
 }
@@ -148,7 +145,7 @@ function funSearch($res, $word, $is_re) {
   $root_dir = '/apps/' . $app_name . '/';
 
   $res_search = $res->search($root_dir, $word, $is_re);
-  $json_search = json_decode($res_search);
+  $json_search = json_decode($res_search, TRUE);
 
   return $json_search;
 }
@@ -162,7 +159,7 @@ function funCopySingle($res, $from, $to) {
    $to = $root_dir . $to;
 
    $res_copy_single = $res->copySingle($from, $to);
-   $json_copy_single = json_decode($res_copy_single);
+   $json_copy_single = json_decode($res_copy_single, TRUE);
 
    return $json_copy_single;
 }

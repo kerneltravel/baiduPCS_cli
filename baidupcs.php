@@ -23,8 +23,10 @@ switch($argv[1]) {
           break;
         case 'list':
         case 'ls':
-          // TODO
-          echo "``./tools.php $argv[2] [_dir/file_]``\n";
+          echo "``./tools.php $argv[2] [_dir_]``\n";
+          break;
+        case 'getmeta':
+          echo "``./tools.php $argv[2] [_dir_/_file_]``\n";
           break;
         case 'move':
         case 'mv':
@@ -35,8 +37,22 @@ switch($argv[1]) {
         case 'remove':
         case 'rm':
           echo "``./tools.php $argv[2] _file_/_dir_ -- _dir_ didn't try\n";
+          break;
         case 'mkdir':
           echo "``./tools.php $argv[2] _dir_\n";
+          break;
+        case 'upload':
+          echo "``./tools.php $argv[2] _src_ _dst_``\n";
+          echo "Upload the file as newcopy by default\n";
+          echo "Modify the code if you want;)\n";
+          break;
+        case 'download':
+          break;
+        case 'search':
+          echo "``./tools.php $argv[2] _keyword_``\n";
+          echo "Search files recursively by default\n";
+          echo "Modify the code if you want;)\n";
+          break;
         default:
           break;
       }
@@ -46,12 +62,14 @@ switch($argv[1]) {
 Basic commands:
   quota
   list / ls
+  getmeta
   copy / cp
   move / mv
   remove / rm
   mkdir
   upload
   download
+  search
 
 Extended commands:
   todo
@@ -67,11 +85,37 @@ EOF;
     break;
   case 'list':
   case 'ls':
-    $return_funListFiles = funListFiles($pcs);
+    if (! isset($argv[2])) {
+      $path = '';
+    }
+    else {
+      $path = $argv[2];
+    }
+    $return_funListFiles = funListFiles($pcs, $path);
     $return_funListFiles_length = sizeof($return_funListFiles["list"]);
     for ($loop = 0; $loop < $return_funListFiles_length; ++$loop) {
       echo $return_funListFiles["list"][$loop]["path"] . "\n";
     }
+    break;
+  case 'getmeta':
+    if (! isset($argv[2])) {
+      exit("Try ``./tools.php help $argv[1]`` for help\n");
+    }
+    $return_funGetMeta = funGetMeta($pcs, $argv[2]);
+    if (isset($return_funGetMeta['list'])) {
+      $return_funGetMeta_list_ctime = $return_funGetMeta['list']['0']['ctime'];
+      $return_funGetMeta_list_mtime = $return_funGetMeta['list']['0']['mtime'];
+      echo date('Y-m-d h:i:s', $return_funGetMeta_list_ctime) . ' | ';
+      echo date('Y-m-d h:i:s', $return_funGetMeta_list_mtime) . ' | ';
+      echo $return_funGetMeta['list']['0']['path'];
+      if ($return_funGetMeta['list']['0']['isdir']) {
+        echo "/";
+      }
+    }
+    else {
+      exit("file not exists\n");
+    }
+    echo "\n";
     break;
   case 'copy':
   case 'cp':
@@ -79,32 +123,60 @@ EOF;
       exit("Try ``./tools.php help $argv[1]`` for help\n");
     }
     $return_funCopySingle = funCopySingle($pcs, $argv[2], $argv[3]);
+    if (! isset($return_funCopySingle['extra']['list']['from'])) {
+      exit("file not exists\n");
+    }
     break;
   case 'move':
   case 'mv':
     if (! isset($argv[2]) || ! isset($argv[3])) {
       exit("Try ``./tool.php help $argv[1]`` for help\n");
     }
-    $return_move_single = funMoveSingle($pcs, $argv[2], $argv[3]);
+    $return_funMoveSingle = funMoveSingle($pcs, $argv[2], $argv[3]);
+    if (! isset($return_funMoveSingle['extra']['list']['from'])) {
+      exit("file not exists\n");
+    }
     break;
   case 'remove':
   case 'rm':
     if (! isset($argv[2])) {
       exit("Try ``./tools.php help $argv[1]`` for help\n");
     }
-    $return_delete_single = funDeleteSingle($pcs, $argv[2]);
+    $return_funDeleteSingle = funDeleteSingle($pcs, $argv[2]);
+    // no return value if success
+    if (isset($return_funDeleteSingle['error_code'])) {
+      exit("file not exists\n");
+    }
     break;
   case 'mkdir':
     if (! isset($argv[2])) {
       exit("Try ``./tools.php help $argv[1]`` for help\n");
     }
-    $return_make_dir = funMakeDir($pcs, $argv[2]);
+    $return_funMakeDir = funMakeDir($pcs, $argv[2]);
     break;
   case 'upload':
+    if (! isset($argv[2]) || ! isset($argv[3])) {
+      exit("Try ``./tools.php help $argv[1]`` for help\n");
+    }
+    //                                                  dst      src
+    // TODO
+    $return_upload_file = methUploadFile($access_token, $argv[3], $argv[2]);
     break;
   case 'download':
+    // file not exists
+    break;
+  case 'search':
+    if (! isset($argv[2])) {
+      exit("Try ``./tools.php help $argv[1]`` for help\n");
+    }
+    $return_funSearch = funSearch($pcs, $argv[2], 1);
+    $return_funSearch_length = sizeof($return_funSearch["list"]);
+    for ($loop = 0; $loop < $return_funSearch_length; ++$loop) {
+      echo $return_funSearch["list"][$loop]["path"] . "\n";
+    }
     break;
   default:
+    echo "oops:(\n";
     echo "Try ``./tools.php help`` for help\n";
     break;
 }
@@ -129,13 +201,6 @@ EOF;
 //print_r($return_funUploadFile);
 
 /*
- * funMakeDir()
- *
- */
-//$return_make_dir = funMakeDir($pcs, 'foo');
-//print_r($return_make_dir);
-
-/*
  * funCreateSuperFile()
  * BUG
  */
@@ -144,59 +209,10 @@ EOF;
 //print_r($return_create_super_file);
 
 /*
- * methUploadFile()
- *
- */
-//$return_upload_file = methUploadFile($access_token, '1.pdf', '/home/jason/github/baiduPCS_cli/sdk/1.pdf');
-//print_r($return_upload_file);
-
-/*
  * methUploadFileStream()
  * BUG
  */
 //$return_upload_file_stream = methUploadFileStream($access_token, '1.pdf', '/home/jason/github/baiduPCS_cli/sdk/1.pdf');
 //print_r($return_upload_file_stream);
-
-/*
- * funGetMeta()
- *
- */
-/*
-$return_get_meta = funGetMeta($pcs, '1.pdf');
-$return_get_meta_list_ctime = $return_get_meta['list']['0']['ctime'];
-$return_get_meta_list_mtime = $return_get_meta['list']['0']['mtime'];
-echo date('Y-m-d h:i:s', $return_get_meta_list_ctime) . ' | ';
-echo date('Y-m-d h:i:s', $return_get_meta_list_mtime) . ' | ';
-echo $return_get_meta['list']['0']['path'];
-
-if ($return_get_meta['list']['0']['isdir']) {
-  echo '/';
-}
-echo "\n";
- */
-//print_r($return_get_meta);
-
-/*
- * funSearch()
- *
- */
-//$search1 = '1';
-//$search2 = 'jpg';
-//$return_search1 = funSearch($pcs, $search1, 1);
-//$return_search2 = funSearch($pcs, $search2, 1);
-//print_r($return_search1);
-//print_r($return_search2);
-
-/*
- * funCopySingle()
- *
- */
-/*
-$return_funCopySingle = funCopySingle($pcs, '1.pdf', 'copy2.pdf');
-if ($return_funCopySingle) {
-  echo 'copy done' . "\n";
-}
-echo "\n";
- */
 
 ?>

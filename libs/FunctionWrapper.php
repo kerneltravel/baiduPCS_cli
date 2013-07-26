@@ -1,7 +1,5 @@
 <?
 
-function echon($str) { }
-
 function getline() {
   return trim(fgets(STDIN));
 }
@@ -55,8 +53,8 @@ function methUploadFile ($access_token, $path, $localfile, $ondup = 'newcopy') {
   $url = "https://c.pcs.baidu.com/rest/2.0/pcs/file?method=upload&access_token=$access_token&path=$path&ondup=$ondup";
   $add = "--form file=@$localfile";
 
-  if (!file_exists($path)) {
-    exit('file not exists');
+  if (! file_exists($localfile)) {
+    exit("file not exists\n");
   }
   $cmd = "curl -X POST -k -L $add \"$url\"";
   $cmd = cmd($cmd);
