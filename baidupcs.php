@@ -47,6 +47,7 @@ switch($argv[1]) {
           echo "Modify the code if you want;)\n";
           break;
         case 'download':
+          echo "``./tools.php $argv[2] _path_ [_localfile_]``\n";
           break;
         case 'search':
           echo "``./tools.php $argv[2] _keyword_``\n";
@@ -163,7 +164,17 @@ EOF;
     $return_upload_file = methUploadFile($access_token, $argv[3], $argv[2]);
     break;
   case 'download':
-    // file not exists
+    if (! isset($argv[2])) {
+      exit("Try ``./tools.php help $argv[1]`` for help\n");
+    }
+    //$return_funDownload = funDownload($pcs, $argv[2]);
+    if (! isset($argv[3])) {
+      $argv[3] = basename($argv[2]);
+    }
+    $return_funDownload = methDownloadFile($access_token, $argv[2], $argv[3]);
+    if (isset($return_funDownload['error_code'])) {
+      exit("file not exists\n");
+    }
     break;
   case 'search':
     if (! isset($argv[2])) {

@@ -171,4 +171,19 @@ function funDiff($res) {
 
   return $json_diff;
 }
+
+// maybe bug...
+function funDownload($res, $path) {
+  $app_name = 'cli';
+  $path = '/apps' . '/' . $app_name . '/' . $path;
+  $file_name = basename($path);
+
+  header('Content-Disposition:attachment;filename="' . $file_name, '"');
+  header('Content-Type:application/octet-stream');
+  $res_download = $res->download($path);
+  $json_download = json_decode($res_download, TRUE);
+
+  return $json_download;
+}
+
 ?>

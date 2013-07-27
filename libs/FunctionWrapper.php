@@ -123,7 +123,33 @@ function methUploadFileStream($access_token, $path, $localfile, $ondup = 'newcop
 
     return $json_cmd;
   }
+}
 
+function methDownloadFile($access_token, $path, $localfile) {
+  $access = $access_token;
+  $path = '/apps/cli/' . $path;
+  $file_name = basename($path);
+  $url = "https://d.pcs.baidu.com/rest/2.0/pcs/file?";
+  $url .= "method=download&";
+  $url .= "access_token=$access_token&";
+  $url .= "path=$path";
+
+  // rename
+  $cmd = "curl -o \"$localfile\" \"$url\"";
+  $cmd = cmd($cmd);
+  $json_cmd = json_decode($cmd, TRUE);
+
+  return $json_cmd;
+
+  //$ch = curl_init();
+  //curl_setopt($ch, CURLOPT_URL, $url);
+  //curl_setopt($ch, CURLOPT_HEADER, 0);
+  //curl_exec($ch);
+  //if (!curl_errno($ch)) {
+  //  $info = curl_getinfo($ch);
+  //  echo $info['url'];
+  //}
+  //curl_close($ch);
 }
 
 ?>

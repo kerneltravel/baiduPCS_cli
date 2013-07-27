@@ -18,7 +18,8 @@ class BaiduPCS {
    * @var array
    */
   private $_pcs_uri_prefixs = array ('https' => 'https://pcs.baidu.com/rest/2.0/pcs/' );
-  //private $_pcs_uri_prefixs_new = array ('https' => 'https://c.pcs.baidu.com/rest/2.0/pcs/');
+  //private $_pcs_uri_prefixs_upload = array ('https' => 'https://c.pcs.baidu.com/rest/2.0/pcs/');
+  //private $_pcs_uri_prefixs_download = array ('https' => 'https://d.pcs.baidu.com/rest/2.0/pcs/');
 
   private $_accessToken = '';
 
